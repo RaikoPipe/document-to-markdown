@@ -1,0 +1,22 @@
+# docprep configuration
+# Copy to docprep.yaml and customize as needed.
+
+pipeline:
+  vlm_preset: granite_docling       # granite_docling | custom HF model path
+  ocr_languages: [en]               # languages for OCR (EasyOCR language codes)
+
+quality_gate:
+  min_text_density: 50              # min chars per page before escalation
+  max_garbled_ratio: 0.20           # max fraction of non-printable characters
+
+fallback:
+  enabled: true
+  provider: mistral                 # mistral | openai | gemini | anthropic
+  max_pages: 50                     # max pages to send to VLM API
+  timeout_seconds: 30               # timeout per API call
+
+# API keys are read from environment variables:
+#   MISTRAL_API_KEY
+#   OPENAI_API_KEY
+#   GEMINI_API_KEY
+#   ANTHROPIC_API_KEY
