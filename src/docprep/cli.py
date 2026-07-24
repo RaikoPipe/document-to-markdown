@@ -6,6 +6,7 @@ import sys
 from pathlib import Path
 
 import click
+from dotenv import load_dotenv
 
 from docprep.config import PipelineConfig
 from docprep.entrypoint import convert
@@ -13,10 +14,19 @@ from docprep.router import UnsupportedFormatError, classify
 from docprep.utils.mime import detect_mime
 
 
+def _load_env() -> None:
+    """Load .env from the current directory and the docprep install root."""
+    cwd_env = Path.cwd() / ".env"
+    if cwd_env.exists():
+        load_dotenv(cwd_env, override=False)
+    else:
+        load_dotenv(override=False)
+
+
 @click.group()
 def main():
     """docprep — Document preprocessing pipeline."""
-    pass
+    _load_env()
 
 
 @main.command()
@@ -25,7 +35,7 @@ def main():
 @click.option("--format", "output_format", type=click.Choice(["md", "json"]), default="md")
 @click.option(
     "--fallback-provider",
-    type=click.Choice(["mistral", "openai", "gemini", "anthropic"]),
+    type=click.Choice(["mistral", "openai", "gemini", "anthropic", "ollama"]),
     default=None,
 )
 @click.option("--vlm-preset", default=None)

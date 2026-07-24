@@ -8,6 +8,7 @@ dependencies = [
     "docling>=2.0",
     "click>=8.0",
     "pyyaml>=6.0",
+    "python-dotenv>=1.0",
     "python-magic>=0.4",
     "pymupdf>=1.25",
 ]
@@ -17,7 +18,8 @@ mistral = ["mistralai"]
 openai = ["openai>=1.0"]
 gemini = ["google-genai"]
 anthropic = ["anthropic>=0.40"]
-all = ["docprep[mistral,openai,gemini,anthropic]"]
+ollama = ["openai>=1.0"]
+all = ["docprep[mistral,openai,gemini,anthropic,ollama]"]
 dev = [
     "pytest>=7.0",
     "pytest-mock",

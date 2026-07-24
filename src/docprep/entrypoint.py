@@ -49,7 +49,7 @@ def convert(
     if (
         config.fallback_enabled
         and config.fallback_provider
-        and should_escalate(markdown, page_count, config)
+        and should_escalate(markdown, page_count, config, mime_type)
     ):
         api_key = config.get_api_key()
         if api_key:
@@ -61,7 +61,7 @@ def convert(
                 f"Primary conversion ({pipeline_used}) produced low-quality output; "
                 f"escalated to {config.fallback_provider}"
             )
-            provider = get_provider(config.fallback_provider, api_key)
+            provider = get_provider(config.fallback_provider, api_key, config)
             markdown = convert_with_fallback(source, provider, config)
             pipeline_used = config.fallback_provider
             escalated = True

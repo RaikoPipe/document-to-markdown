@@ -4,7 +4,6 @@ import base64
 from abc import ABC, abstractmethod
 from pathlib import Path
 
-
 CONVERSION_SYSTEM_PROMPT = (
     "Convert this document page to Markdown. "
     "Preserve all headings, tables, lists, and reading order. "
