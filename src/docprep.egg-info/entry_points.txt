@@ -1,0 +1,2 @@
+[console_scripts]
+docprep = docprep.cli:main
