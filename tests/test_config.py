@@ -21,6 +21,9 @@ def test_defaults():
     assert config.quality_min_chars_per_page == 50
     assert config.fallback_enabled is True
     assert config.fallback_provider is None
+    assert config.mineru_enabled is False
+    assert config.mineru_backend == "hybrid-engine"
+    assert config.mineru_strip_images is True
 
 
 def test_from_yaml(tmp_path: Path):

@@ -19,7 +19,8 @@ openai = ["openai>=1.0"]
 gemini = ["google-genai"]
 anthropic = ["anthropic>=0.40"]
 ollama = ["openai>=1.0"]
-all = ["docprep[mistral,openai,gemini,anthropic,ollama]"]
+mineru = ["mineru>=3.3"]
+all = ["docprep[mistral,openai,gemini,anthropic,ollama,mineru]"]
 dev = [
     "pytest>=7.0",
     "pytest-mock",
