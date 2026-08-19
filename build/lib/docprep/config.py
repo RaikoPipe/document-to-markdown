@@ -49,6 +49,21 @@ class PipelineConfig:
     fallback_max_pages: int = 50
     fallback_timeout_seconds: int = 30
 
+    mineru_enabled: bool = False
+    mineru_backend: str = "hybrid-engine"
+    mineru_effort: str = "medium"
+    mineru_language: str = "ch"
+    mineru_parse_method: str = "auto"
+    mineru_formula_enable: bool = True
+    mineru_table_enable: bool = True
+    mineru_image_analysis: bool = True
+    mineru_api_url: str | None = None
+    mineru_server_url: str | None = None
+    mineru_start_page_id: int = 0
+    mineru_end_page_id: int | None = None
+    mineru_timeout_seconds: int = 600
+    mineru_strip_images: bool = True
+
     @classmethod
     def from_yaml(cls, path: Path) -> PipelineConfig:
         with open(path) as f:
@@ -102,6 +117,36 @@ class PipelineConfig:
         if "timeout_seconds" in fb:
             kwargs["fallback_timeout_seconds"] = fb["timeout_seconds"]
 
+        mu = raw.get("mineru", {})
+        if "enabled" in mu:
+            kwargs["mineru_enabled"] = mu["enabled"]
+        if "backend" in mu:
+            kwargs["mineru_backend"] = mu["backend"]
+        if "effort" in mu:
+            kwargs["mineru_effort"] = mu["effort"]
+        if "language" in mu:
+            kwargs["mineru_language"] = mu["language"]
+        if "parse_method" in mu:
+            kwargs["mineru_parse_method"] = mu["parse_method"]
+        if "formula_enable" in mu:
+            kwargs["mineru_formula_enable"] = mu["formula_enable"]
+        if "table_enable" in mu:
+            kwargs["mineru_table_enable"] = mu["table_enable"]
+        if "image_analysis" in mu:
+            kwargs["mineru_image_analysis"] = mu["image_analysis"]
+        if "api_url" in mu:
+            kwargs["mineru_api_url"] = mu["api_url"]
+        if "server_url" in mu:
+            kwargs["mineru_server_url"] = mu["server_url"]
+        if "start_page_id" in mu:
+            kwargs["mineru_start_page_id"] = mu["start_page_id"]
+        if "end_page_id" in mu:
+            kwargs["mineru_end_page_id"] = mu["end_page_id"]
+        if "timeout_seconds" in mu:
+            kwargs["mineru_timeout_seconds"] = mu["timeout_seconds"]
+        if "strip_images" in mu:
+            kwargs["mineru_strip_images"] = mu["strip_images"]
+
         return cls(**kwargs)
 
     @classmethod
@@ -126,6 +171,18 @@ class PipelineConfig:
         env_base_url = os.environ.get("DOCPREP_FALLBACK_BASE_URL")
         if env_base_url:
             config.fallback_base_url = env_base_url
+
+        env_mineru_api_url = os.environ.get("DOCPREP_MINERU_API_URL")
+        if env_mineru_api_url:
+            config.mineru_api_url = env_mineru_api_url
+
+        env_mineru_server_url = os.environ.get("DOCPREP_MINERU_SERVER_URL")
+        if env_mineru_server_url:
+            config.mineru_server_url = env_mineru_server_url
+
+        env_mineru_backend = os.environ.get("DOCPREP_MINERU_BACKEND")
+        if env_mineru_backend:
+            config.mineru_backend = env_mineru_backend
 
         if cli_overrides:
             for key, value in cli_overrides.items():

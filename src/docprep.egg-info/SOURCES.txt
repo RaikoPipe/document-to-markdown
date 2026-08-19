@@ -18,6 +18,7 @@ src/docprep/models/two_stage_model.py
 src/docprep/models/two_stage_options.py
 src/docprep/paths/__init__.py
 src/docprep/paths/docling_convert.py
+src/docprep/paths/mineru_convert.py
 src/docprep/paths/vlm_fallback.py
 src/docprep/providers/__init__.py
 src/docprep/providers/anthropic.py
@@ -32,6 +33,7 @@ src/docprep/utils/mime.py
 tests/test_cli.py
 tests/test_config.py
 tests/test_entrypoint.py
+tests/test_mineru_convert.py
 tests/test_providers.py
 tests/test_quality.py
 tests/test_result.py

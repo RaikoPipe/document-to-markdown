@@ -6,15 +6,31 @@ from pathlib import Path
 
 from docprep.config import PipelineConfig
 from docprep.paths.docling_convert import convert_standard, convert_vlm
+from docprep.paths.mineru_convert import convert_mineru
 from docprep.paths.vlm_fallback import convert_with_fallback
 from docprep.providers import get_provider
 from docprep.quality import should_escalate
 from docprep.result import ConversionResult
-from docprep.router import ProcessingPath, UnsupportedFormatError, classify
+from docprep.router import (
+    IMAGE_MIMES,
+    ProcessingPath,
+    UnsupportedFormatError,
+    classify,
+)
 from docprep.utils.images import get_page_count
 from docprep.utils.mime import detect_mime
 
 logger = logging.getLogger(__name__)
+
+# MinerU accepts PDF, images, and the OOXML office formats (DOCX/PPTX/XLSX).
+# Legacy MS office (.doc/.xls/.ppt), EPUB, HTML, CSV, text, XML, Markdown fall
+# back to Docling even when mineru_enabled=True.
+_MINERU_SUPPORTED_MIMES = IMAGE_MIMES | {
+    "application/pdf",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+}
 
 
 def convert(
@@ -36,7 +52,28 @@ def convert(
 
     page_count = get_page_count(source)
 
-    if path == ProcessingPath.SCANNED:
+    mineru_eligible = config.mineru_enabled and mime_type in _MINERU_SUPPORTED_MIMES
+    if mineru_eligible:
+        logger.info("Routing %s through MinerU (backend=%s)", source.name, config.mineru_backend)
+        markdown = convert_mineru(source, config)
+        pipeline_used = f"mineru:{config.mineru_backend}"
+    elif config.mineru_enabled and not mineru_eligible:
+        logger.info(
+            "MinerU enabled but %s (mime=%s) unsupported; falling back to Docling (%s)",
+            source.name,
+            mime_type,
+            path.value,
+        )
+        warnings.append(
+            f"MinerU does not support {mime_type}; converted via Docling {path.value} instead"
+        )
+        if path == ProcessingPath.SCANNED:
+            markdown = convert_vlm(source, config)
+            pipeline_used = "vlm"
+        else:
+            markdown = convert_standard(source, config)
+            pipeline_used = "standard"
+    elif path == ProcessingPath.SCANNED:
         logger.info("Routing %s through VLM pipeline (scanned/image content)", source.name)
         markdown = convert_vlm(source, config)
         pipeline_used = "vlm"
@@ -46,8 +83,13 @@ def convert(
         pipeline_used = "standard"
 
     escalated = False
+    skip_escalation = pipeline_used.startswith("mineru:") and config.mineru_backend in (
+        "vlm-engine",
+        "hybrid-engine",
+    )
     if (
-        config.fallback_enabled
+        not skip_escalation
+        and config.fallback_enabled
         and config.fallback_provider
         and should_escalate(markdown, page_count, config, mime_type)
     ):

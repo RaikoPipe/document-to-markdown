@@ -6,7 +6,7 @@ python-magic>=0.4
 pymupdf>=1.25
 
 [all]
-docprep[anthropic,gemini,mistral,ollama,openai]
+docprep[anthropic,gemini,mineru,mistral,ollama,openai]
 
 [anthropic]
 anthropic>=0.40
@@ -18,6 +18,9 @@ ruff
 
 [gemini]
 google-genai
+
+[mineru]
+mineru>=3.3
 
 [mistral]
 mistralai

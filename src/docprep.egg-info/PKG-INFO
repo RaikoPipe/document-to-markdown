@@ -20,8 +20,10 @@ Provides-Extra: anthropic
 Requires-Dist: anthropic>=0.40; extra == "anthropic"
 Provides-Extra: ollama
 Requires-Dist: openai>=1.0; extra == "ollama"
+Provides-Extra: mineru
+Requires-Dist: mineru>=3.3; extra == "mineru"
 Provides-Extra: all
-Requires-Dist: docprep[anthropic,gemini,mistral,ollama,openai]; extra == "all"
+Requires-Dist: docprep[anthropic,gemini,mineru,mistral,ollama,openai]; extra == "all"
 Provides-Extra: dev
 Requires-Dist: pytest>=7.0; extra == "dev"
 Requires-Dist: pytest-mock; extra == "dev"
